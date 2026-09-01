@@ -4,6 +4,7 @@ import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { createPaymentPreference } from "@/lib/mercadopago/create-preference";
+import { updateOrderStatus, restoreProductStock } from "@/lib/orders/update-status";
 import type { CartItem } from "@/lib/types/cart";
 
 const guestSchema = z.object({
@@ -101,6 +102,21 @@ export async function submitCheckout(input: CheckoutInput): Promise<CheckoutResu
       if (!item.startDate || !item.endDate || days < 1) {
         return { error: `Las fechas de arriendo de "${item.nameEs}" no son válidas.` };
       }
+
+      // Availability check: reject if this vehicle already has a
+      // pending/paid/fulfilled booking whose date range overlaps.
+      const { data: conflicts } = await supabase
+        .from("order_items")
+        .select("id, selected_date, selected_end_date, orders!inner(status)")
+        .eq("item_type", "vehicle_rental")
+        .eq("item_id", vehicle.id)
+        .in("orders.status", ["pending", "paid", "fulfilled"])
+        .lte("selected_date", item.endDate)
+        .gte("selected_end_date", item.startDate);
+      if (conflicts && conflicts.length > 0) {
+        return { error: `"${item.nameEs}" ya está reservado en esas fechas.` };
+      }
+
       validatedItems.push({
         item_type: "vehicle_rental",
         item_id: vehicle.id,
@@ -171,7 +187,12 @@ export async function submitCheckout(input: CheckoutInput): Promise<CheckoutResu
     return { error: "No pudimos guardar los ítems del pedido." };
   }
 
-  // Reserve stock for physical products (atomic, race-safe — see migration 0003).
+  // From here on, anything that fails must restore whatever stock we've
+  // already reserved and mark the order failed — otherwise a payment
+  // outage or a mid-loop stock race permanently shrinks inventory for an
+  // order that never got paid.
+  const decremented: { item_id: string; quantity: number }[] = [];
+
   for (const item of validatedItems) {
     if (item.item_type !== "product") continue;
     const { data: ok } = await supabase.rpc("decrement_stock", {
@@ -179,18 +200,39 @@ export async function submitCheckout(input: CheckoutInput): Promise<CheckoutResu
       p_qty: item.quantity,
     });
     if (!ok) {
+      await restoreProductStock(decremented);
+      await updateOrderStatus(order.id, "failed");
       return { error: `"${item.name_snapshot}" se agotó mientras completabas el pedido.` };
     }
+    decremented.push({ item_id: item.item_id, quantity: item.quantity });
   }
 
-  const { initPoint, preferenceId } = await createPaymentPreference(
-    { id: order.id, customer_name: guest.data.name, customer_email: guest.data.email, total_clp: totalClp },
-    validatedItems,
-  );
+  try {
+    const { initPoint, preferenceId } = await createPaymentPreference(
+      {
+        id: order.id,
+        customer_name: guest.data.name,
+        customer_email: guest.data.email,
+        total_clp: totalClp,
+      },
+      validatedItems,
+    );
 
-  if (preferenceId) {
-    await supabase.from("orders").update({ mp_preference_id: preferenceId }).eq("id", order.id);
+    if (preferenceId) {
+      const { error: prefError } = await supabase
+        .from("orders")
+        .update({ mp_preference_id: preferenceId })
+        .eq("id", order.id);
+      if (prefError) {
+        console.error(`checkout: failed to store mp_preference_id for ${order.id}:`, prefError.message);
+      }
+    }
+
+    return { orderId: order.id, paymentUrl: initPoint };
+  } catch (err) {
+    console.error(`checkout: payment preference creation failed for ${order.id}:`, err);
+    await restoreProductStock(decremented);
+    await updateOrderStatus(order.id, "failed");
+    return { error: "No pudimos iniciar el pago. Intenta nuevamente en unos minutos." };
   }
-
-  return { orderId: order.id, paymentUrl: initPoint };
 }

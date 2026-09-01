@@ -51,20 +51,25 @@ export default function CheckoutPage() {
     setPending(true);
     setError(null);
 
-    const result = await submitCheckout({
-      items,
-      guest: { name, email, phone },
-      locale,
-    });
+    try {
+      const result = await submitCheckout({
+        items,
+        guest: { name, email, phone },
+        locale,
+      });
 
-    if ("error" in result) {
-      setError(result.error);
+      if ("error" in result) {
+        setError(result.error);
+        setPending(false);
+        return;
+      }
+
+      clear();
+      window.location.href = result.paymentUrl;
+    } catch {
+      setError("Algo salió mal al procesar tu pedido. Intenta nuevamente.");
       setPending(false);
-      return;
     }
-
-    clear();
-    window.location.href = result.paymentUrl;
   }
 
   return (

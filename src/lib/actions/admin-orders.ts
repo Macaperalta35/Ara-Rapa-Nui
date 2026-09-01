@@ -2,14 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { requireAdminAction } from "@/lib/auth/admin-guard";
+import { updateOrderStatus, type OrderStatus } from "@/lib/orders/update-status";
 import { createClient } from "@/lib/supabase/server";
-import type { OrderStatus } from "@/lib/orders/update-status";
 
 export async function updateOrderStatusAction(orderId: string, status: OrderStatus) {
   await requireAdminAction();
-  const supabase = await createClient();
-  const { error } = await supabase.from("orders").update({ status }).eq("id", orderId);
-  if (error) throw new Error(error.message);
+  await updateOrderStatus(orderId, status);
   revalidatePath("/admin/pedidos");
   revalidatePath(`/admin/pedidos/${orderId}`);
 }

@@ -26,12 +26,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: true }, { status: 200 });
     }
 
+    // Map Mercado Pago's payment statuses to ours. Refunds/chargebacks map
+    // to "cancelled" rather than "pending" so a settled order's outcome
+    // (it was paid, then reversed) isn't lost — "pending" only covers
+    // genuinely in-flight states.
     const status =
       payment.status === "approved"
         ? "paid"
         : payment.status === "rejected"
           ? "failed"
-          : "pending";
+          : payment.status === "refunded" || payment.status === "charged_back"
+            ? "cancelled"
+            : "pending";
 
     await updateOrderStatus(payment.external_reference, status, String(payment.id));
   } catch (err) {

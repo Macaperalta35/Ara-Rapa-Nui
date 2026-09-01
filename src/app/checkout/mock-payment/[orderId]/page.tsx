@@ -10,13 +10,22 @@ export default async function MockPaymentPage({
 
   async function approve() {
     "use server";
-    await resolveMockPayment(orderId, true);
+    try {
+      await resolveMockPayment(orderId, true);
+    } catch {
+      // Already processed (or otherwise refused) — fall through to the
+      // confirmation page, which shows whatever the real current status is.
+    }
     redirect(`/checkout/confirmacion/${orderId}?status=success`);
   }
 
   async function reject() {
     "use server";
-    await resolveMockPayment(orderId, false);
+    try {
+      await resolveMockPayment(orderId, false);
+    } catch {
+      // See approve() above.
+    }
     redirect(`/checkout/confirmacion/${orderId}?status=failure`);
   }
 
