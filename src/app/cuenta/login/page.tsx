@@ -20,7 +20,7 @@ export default function CustomerLoginPage() {
     setError(null);
 
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
       setError("Correo o contraseña incorrectos.");
@@ -28,7 +28,15 @@ export default function CustomerLoginPage() {
       return;
     }
 
-    router.push("/cuenta");
+    // Staff accounts (admin/superadmin) belong in the admin panel, not the
+    // customer account area, even though they can authenticate here too.
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("id", data.user.id)
+      .maybeSingle();
+
+    router.push(profile ? "/admin" : "/cuenta");
     router.refresh();
   }
 
