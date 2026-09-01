@@ -37,12 +37,13 @@ export async function submitCheckout(input: CheckoutInput): Promise<CheckoutResu
   const supabase = createAdminClient();
 
   type ValidatedItem = {
-    item_type: "package" | "experience" | "product";
+    item_type: "package" | "experience" | "product" | "vehicle_rental";
     item_id: string;
     name_snapshot: string;
     unit_price_clp: number;
     quantity: number;
     selected_date: string | null;
+    selected_end_date: string | null;
   };
 
   const validatedItems: ValidatedItem[] = [];
@@ -64,6 +65,7 @@ export async function submitCheckout(input: CheckoutInput): Promise<CheckoutResu
         unit_price_clp: pkg.price_clp,
         quantity: item.quantity,
         selected_date: item.startDate ?? null,
+        selected_end_date: null,
       });
     } else if (item.type === "experience") {
       const { data: exp } = await supabase
@@ -81,6 +83,31 @@ export async function submitCheckout(input: CheckoutInput): Promise<CheckoutResu
         unit_price_clp: exp.price_clp,
         quantity: item.quantity,
         selected_date: item.selectedDate ?? null,
+        selected_end_date: null,
+      });
+    } else if (item.type === "vehicle_rental") {
+      const { data: vehicle } = await supabase
+        .from("vehicle_rentals")
+        .select("id, name_es, name_en, price_clp_per_day, is_active")
+        .eq("id", item.vehicleId)
+        .maybeSingle();
+      if (!vehicle || !vehicle.is_active) {
+        return { error: `"${item.nameEs}" ya no está disponible para arriendo.` };
+      }
+      const days = Math.round(
+        (new Date(item.endDate).getTime() - new Date(item.startDate).getTime()) / 86_400_000,
+      );
+      if (!item.startDate || !item.endDate || days < 1) {
+        return { error: `Las fechas de arriendo de "${item.nameEs}" no son válidas.` };
+      }
+      validatedItems.push({
+        item_type: "vehicle_rental",
+        item_id: vehicle.id,
+        name_snapshot: input.locale === "es" ? vehicle.name_es : vehicle.name_en,
+        unit_price_clp: vehicle.price_clp_per_day * days,
+        quantity: item.quantity,
+        selected_date: item.startDate,
+        selected_end_date: item.endDate,
       });
     } else {
       const { data: product } = await supabase
@@ -101,6 +128,7 @@ export async function submitCheckout(input: CheckoutInput): Promise<CheckoutResu
         unit_price_clp: product.price_clp,
         quantity: item.quantity,
         selected_date: null,
+        selected_end_date: null,
       });
     }
   }

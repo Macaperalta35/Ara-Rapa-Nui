@@ -11,6 +11,7 @@ export function CatalogCard({
   meta,
   locale,
   fromLabel,
+  priceSuffix,
 }: {
   href: string;
   name: string;
@@ -20,6 +21,7 @@ export function CatalogCard({
   meta?: string;
   locale: Locale;
   fromLabel: string;
+  priceSuffix?: string;
 }) {
   return (
     <Link
@@ -48,6 +50,7 @@ export function CatalogCard({
         )}
         <div className="mt-auto pt-2 text-sm font-medium text-terracotta">
           {fromLabel} {formatClp(priceClp)}
+          {priceSuffix ? ` ${priceSuffix}` : ""}
         </div>
       </div>
     </Link>

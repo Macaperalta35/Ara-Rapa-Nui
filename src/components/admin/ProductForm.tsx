@@ -37,6 +37,17 @@ export function ProductForm({ product }: { product?: Product }) {
         <Field label="Stock" name="stock" type="number" defaultValue={product?.stock ?? 0} required />
         <Field label="SKU" name="sku" defaultValue={product?.sku ?? ""} />
       </div>
+      <label className="flex flex-col gap-1 text-sm font-medium text-volcanic">
+        Público
+        <select
+          name="audience"
+          defaultValue={product?.audience ?? "tourist"}
+          className="rounded-lg border border-sand-dark px-3 py-2 text-sm font-normal"
+        >
+          <option value="tourist">Turistas (catálogo general)</option>
+          <option value="resident">Residentes de Rapa Nui</option>
+        </select>
+      </label>
       <Field
         label="URL imagen de portada"
         name="cover_image_url"

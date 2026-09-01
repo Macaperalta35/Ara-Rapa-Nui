@@ -12,6 +12,8 @@ export function Header() {
     { href: "/catalogo/paquetes", label: t.nav.packages },
     { href: "/catalogo/experiencias", label: t.nav.experiences },
     { href: "/catalogo/productos", label: t.nav.products },
+    { href: "/catalogo/vehiculos", label: t.nav.vehicleRentals },
+    { href: "/catalogo/productos-residentes", label: t.nav.residentProducts },
     { href: "/pedido-especial", label: t.nav.specialRequest },
   ];
 
@@ -22,7 +24,7 @@ export function Header() {
           Ara Rapa Nui
         </Link>
 
-        <nav className="hidden items-center gap-6 md:flex">
+        <nav className="hidden flex-wrap items-center gap-x-5 gap-y-1 lg:flex">
           {links.map((link) => (
             <Link
               key={link.href}
@@ -40,7 +42,7 @@ export function Header() {
         </div>
       </div>
 
-      <nav className="flex items-center gap-4 overflow-x-auto border-t border-sand-dark/60 px-4 py-2 md:hidden">
+      <nav className="flex items-center gap-4 overflow-x-auto border-t border-sand-dark/60 px-4 py-2 lg:hidden">
         {links.map((link) => (
           <Link
             key={link.href}

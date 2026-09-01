@@ -27,4 +27,16 @@ export type ProductCartItem = CartItemBase & {
   slug: string;
 };
 
-export type CartItem = PackageCartItem | ExperienceCartItem | ProductCartItem;
+export type VehicleRentalCartItem = CartItemBase & {
+  type: "vehicle_rental";
+  vehicleId: string;
+  slug: string;
+  startDate: string;
+  endDate: string;
+};
+
+export type CartItem =
+  | PackageCartItem
+  | ExperienceCartItem
+  | ProductCartItem
+  | VehicleRentalCartItem;

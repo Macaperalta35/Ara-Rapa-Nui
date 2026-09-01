@@ -24,6 +24,12 @@ export function Footer() {
           <Link href="/catalogo/productos" className="hover:text-white">
             {t.nav.products}
           </Link>
+          <Link href="/catalogo/vehiculos" className="hover:text-white">
+            {t.nav.vehicleRentals}
+          </Link>
+          <Link href="/catalogo/productos-residentes" className="hover:text-white">
+            {t.nav.residentProducts}
+          </Link>
           <Link href="/pedido-especial" className="hover:text-white">
             {t.nav.specialRequest}
           </Link>

@@ -42,7 +42,11 @@ export default async function AdminOrderDetailPage({
             <li key={item.id} className="flex justify-between text-sm">
               <span>
                 {item.quantity}× {item.name_snapshot}
-                {item.selected_date ? ` (${item.selected_date})` : ""}
+                {item.selected_date && item.selected_end_date
+                  ? ` (${item.selected_date} → ${item.selected_end_date})`
+                  : item.selected_date
+                    ? ` (${item.selected_date})`
+                    : ""}
               </span>
               <span className="font-medium">{formatClp(item.unit_price_clp * item.quantity)}</span>
             </li>

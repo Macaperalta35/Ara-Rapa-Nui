@@ -118,3 +118,55 @@ values
     9000, 50, 'RN-CAFE-01', true
   )
 on conflict (slug) do nothing;
+
+-- Resident-only products (audience = 'resident') ---------------------------
+
+insert into products (slug, name_es, name_en, description_es, description_en, price_clp, stock, sku, is_active, audience)
+values
+  (
+    'balon-gas-15kg',
+    'Balón de Gas 15kg',
+    '15kg Gas Cylinder',
+    'Balón de gas licuado, recarga o cambio a domicilio en la isla.',
+    'Liquefied gas cylinder, refill or exchange delivered on the island.',
+    25000, 20, 'RN-GAS-15', true, 'resident'
+  ),
+  (
+    'bidon-agua-purificada-20l',
+    'Bidón de Agua Purificada 20L',
+    '20L Purified Water Jug',
+    'Bidón retornable de agua purificada para consumo doméstico.',
+    'Returnable purified water jug for household use.',
+    5000, 40, 'RN-AGUA-20', true, 'resident'
+  )
+on conflict (slug) do nothing;
+
+-- Vehicle rentals -----------------------------------------------------------
+
+insert into vehicle_rentals (slug, name_es, name_en, description_es, description_en, vehicle_type, brand_model, capacity, transmission, price_clp_per_day, is_active)
+values
+  (
+    'jeep-4x4',
+    'Jeep 4x4',
+    '4x4 Jeep',
+    'Ideal para recorrer caminos de tierra y llegar a los sitios más remotos de la isla.',
+    'Ideal for dirt roads and reaching the island''s most remote sites.',
+    'suv', 'Suzuki Jimny o similar', 5, 'Manual', 45000, true
+  ),
+  (
+    'scooter-moto',
+    'Scooter / Moto',
+    'Scooter / Motorbike',
+    'Libertad para moverte por la isla a tu ritmo. Incluye cascos.',
+    'Freedom to move around the island at your own pace. Helmets included.',
+    'scooter', '150cc', 2, 'Automática', 20000, true
+  ),
+  (
+    'bicicleta',
+    'Bicicleta',
+    'Bicycle',
+    'Bicicleta todo terreno, perfecta para trayectos cortos por Hanga Roa.',
+    'All-terrain bicycle, perfect for short trips around Hanga Roa.',
+    'bike', 'Mountain bike', 1, null, 8000, true
+  )
+on conflict (slug) do nothing;

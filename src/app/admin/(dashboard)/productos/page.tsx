@@ -32,6 +32,11 @@ export default async function AdminProductsPage() {
               <p className="font-medium text-volcanic">
                 {product.name_es}{" "}
                 {!product.is_active && <span className="text-xs text-volcanic/40">(inactivo)</span>}
+                {product.audience === "resident" && (
+                  <span className="ml-1 rounded-full bg-ocean/15 px-2 py-0.5 text-xs font-medium text-ocean">
+                    residentes
+                  </span>
+                )}
               </p>
               <p className="text-sm text-volcanic/60">
                 {formatClp(product.price_clp)} · stock {product.stock}

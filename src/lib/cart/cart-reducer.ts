@@ -57,5 +57,10 @@ function sameLine(a: CartItem, b: CartItem): boolean {
   if (a.type === "product" && b.type === "product") {
     return a.productId === b.productId;
   }
+  if (a.type === "vehicle_rental" && b.type === "vehicle_rental") {
+    return (
+      a.vehicleId === b.vehicleId && a.startDate === b.startDate && a.endDate === b.endDate
+    );
+  }
   return false;
 }

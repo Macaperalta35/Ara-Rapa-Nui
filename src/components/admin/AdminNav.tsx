@@ -11,6 +11,7 @@ const links = [
   { href: "/admin/paquetes", label: "Paquetes" },
   { href: "/admin/experiencias", label: "Experiencias" },
   { href: "/admin/productos", label: "Productos" },
+  { href: "/admin/vehiculos", label: "Vehículos" },
 ];
 
 export function AdminNav() {

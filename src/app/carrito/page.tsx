@@ -50,10 +50,15 @@ export default function CartPage() {
               <p className="font-medium text-volcanic">
                 {locale === "es" ? line.nameEs : line.nameEn}
               </p>
-              {"startDate" in line && line.startDate && (
+              {line.type === "vehicle_rental" && (
+                <p className="text-sm text-volcanic/60">
+                  {line.startDate} → {line.endDate}
+                </p>
+              )}
+              {line.type === "package" && line.startDate && (
                 <p className="text-sm text-volcanic/60">{line.startDate}</p>
               )}
-              {"selectedDate" in line && line.selectedDate && (
+              {line.type === "experience" && line.selectedDate && (
                 <p className="text-sm text-volcanic/60">{line.selectedDate}</p>
               )}
               <p className="text-sm text-volcanic/60">{formatClp(line.unitPriceClp)}</p>

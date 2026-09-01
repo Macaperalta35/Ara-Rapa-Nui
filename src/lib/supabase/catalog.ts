@@ -1,6 +1,12 @@
 import { createClient } from "./server";
 import { isSupabaseConfigured } from "./config";
-import type { Package, Experience, Product } from "@/lib/types/catalog";
+import type {
+  Package,
+  Experience,
+  Product,
+  ProductAudience,
+  VehicleRental,
+} from "@/lib/types/catalog";
 
 // Every function here returns an empty result instead of throwing when
 // Supabase isn't configured yet, so the site stays browsable while the
@@ -68,13 +74,14 @@ export async function getExperienceBySlug(slug: string): Promise<Experience | nu
   return data;
 }
 
-export async function getProducts(): Promise<Product[]> {
+export async function getProducts(audience: ProductAudience = "tourist"): Promise<Product[]> {
   if (!isSupabaseConfigured()) return [];
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("products")
     .select("*")
     .eq("is_active", true)
+    .eq("audience", audience)
     .order("created_at", { ascending: false });
   if (error) {
     console.warn("getProducts:", error.message);
@@ -94,6 +101,37 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
     .maybeSingle();
   if (error) {
     console.warn("getProductBySlug:", error.message);
+    return null;
+  }
+  return data;
+}
+
+export async function getVehicleRentals(): Promise<VehicleRental[]> {
+  if (!isSupabaseConfigured()) return [];
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("vehicle_rentals")
+    .select("*")
+    .eq("is_active", true)
+    .order("created_at", { ascending: false });
+  if (error) {
+    console.warn("getVehicleRentals:", error.message);
+    return [];
+  }
+  return data ?? [];
+}
+
+export async function getVehicleRentalBySlug(slug: string): Promise<VehicleRental | null> {
+  if (!isSupabaseConfigured()) return null;
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("vehicle_rentals")
+    .select("*")
+    .eq("slug", slug)
+    .eq("is_active", true)
+    .maybeSingle();
+  if (error) {
+    console.warn("getVehicleRentalBySlug:", error.message);
     return null;
   }
   return data;

@@ -1,15 +1,23 @@
 import Link from "next/link";
-import { getPackages, getExperiences, getProducts } from "@/lib/supabase/catalog";
+import {
+  getPackages,
+  getExperiences,
+  getProducts,
+  getVehicleRentals,
+} from "@/lib/supabase/catalog";
 import { getDictionary, localize } from "@/lib/i18n/get-locale";
 import { CatalogCard } from "@/components/catalog/CatalogCard";
 
 export default async function HomePage() {
-  const [packages, experiences, products, { locale, dict }] = await Promise.all([
-    getPackages(),
-    getExperiences(),
-    getProducts(),
-    getDictionary(),
-  ]);
+  const [packages, experiences, products, residentProducts, vehicles, { locale, dict }] =
+    await Promise.all([
+      getPackages(),
+      getExperiences(),
+      getProducts(),
+      getProducts("resident"),
+      getVehicleRentals(),
+      getDictionary(),
+    ]);
 
   return (
     <div>
@@ -78,6 +86,37 @@ export default async function HomePage() {
         fromLabel={dict.common.price}
         emptyLabel={dict.common.empty}
       />
+
+      <CatalogSection
+        title={dict.home.sectionVehicleRentals}
+        seeAllHref="/catalogo/vehiculos"
+        items={vehicles.slice(0, 3).map((vehicle) => ({
+          href: `/catalogo/vehiculos/${vehicle.slug}`,
+          name: localize(vehicle, "name", locale),
+          description: localize(vehicle, "description", locale) || null,
+          priceClp: vehicle.price_clp_per_day,
+          imageUrl: vehicle.cover_image_url,
+        }))}
+        locale={locale}
+        fromLabel={dict.common.from}
+        priceSuffix={dict.common.perDay}
+        emptyLabel={dict.common.empty}
+      />
+
+      <CatalogSection
+        title={dict.home.sectionResidentProducts}
+        seeAllHref="/catalogo/productos-residentes"
+        items={residentProducts.slice(0, 3).map((product) => ({
+          href: `/catalogo/productos/${product.slug}`,
+          name: localize(product, "name", locale),
+          description: localize(product, "description", locale) || null,
+          priceClp: product.price_clp,
+          imageUrl: product.cover_image_url,
+        }))}
+        locale={locale}
+        fromLabel={dict.common.price}
+        emptyLabel={dict.common.empty}
+      />
     </div>
   );
 }
@@ -88,6 +127,7 @@ function CatalogSection({
   items,
   locale,
   fromLabel,
+  priceSuffix,
   emptyLabel,
 }: {
   title: string;
@@ -101,6 +141,7 @@ function CatalogSection({
   }[];
   locale: import("@/lib/i18n/dictionaries").Locale;
   fromLabel: string;
+  priceSuffix?: string;
   emptyLabel: string;
 }) {
   return (
@@ -117,7 +158,13 @@ function CatalogSection({
       ) : (
         <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item) => (
-            <CatalogCard key={item.href} locale={locale} fromLabel={fromLabel} {...item} />
+            <CatalogCard
+              key={item.href}
+              locale={locale}
+              fromLabel={fromLabel}
+              priceSuffix={priceSuffix}
+              {...item}
+            />
           ))}
         </div>
       )}
