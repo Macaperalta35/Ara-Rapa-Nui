@@ -1,8 +1,10 @@
 "use client";
 
 import { upsertProduct } from "@/lib/actions/admin-catalog";
+import { uploadAdminImage } from "@/lib/actions/upload-image";
 import type { Product } from "@/lib/types/catalog";
 import { Field, TextArea } from "./FormFields";
+import { ImageUploadField } from "@/components/ui/ImageUploadField";
 
 export function ProductForm({ product }: { product?: Product }) {
   return (
@@ -48,10 +50,11 @@ export function ProductForm({ product }: { product?: Product }) {
           <option value="resident">Residentes de Rapa Nui</option>
         </select>
       </label>
-      <Field
-        label="URL imagen de portada"
+      <ImageUploadField
+        label="Foto de portada"
         name="cover_image_url"
         defaultValue={product?.cover_image_url ?? ""}
+        action={uploadAdminImage}
       />
       <label className="flex items-center gap-2 text-sm font-medium text-volcanic">
         <input type="checkbox" name="is_active" defaultChecked={product?.is_active ?? true} />

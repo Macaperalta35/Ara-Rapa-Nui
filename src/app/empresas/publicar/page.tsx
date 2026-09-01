@@ -2,7 +2,9 @@
 
 import { useActionState } from "react";
 import { submitBusiness } from "@/lib/actions/businesses";
+import { uploadPublicImage } from "@/lib/actions/upload-image";
 import { BUSINESS_CATEGORIES } from "@/lib/types/business";
+import { ImageUploadField } from "@/components/ui/ImageUploadField";
 
 export default function PublishBusinessPage() {
   const [state, formAction, pending] = useActionState(submitBusiness, undefined);
@@ -112,14 +114,7 @@ export default function PublishBusinessPage() {
           </label>
         </div>
 
-        <label className="flex flex-col gap-1 text-sm font-medium text-volcanic">
-          URL de una imagen o logo
-          <input
-            name="cover_image_url"
-            type="url"
-            className="rounded-lg border border-sand-dark px-3 py-2 text-sm"
-          />
-        </label>
+        <ImageUploadField label="Foto o logo" name="cover_image_url" action={uploadPublicImage} />
 
         <label className="flex flex-col gap-1 text-sm font-medium text-volcanic">
           Tu correo de contacto (no se muestra públicamente)

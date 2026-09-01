@@ -1,8 +1,10 @@
 "use client";
 
 import { upsertPackage } from "@/lib/actions/admin-catalog";
+import { uploadAdminImage } from "@/lib/actions/upload-image";
 import type { Package } from "@/lib/types/catalog";
 import { Field, TextArea } from "./FormFields";
+import { ImageUploadField } from "@/components/ui/ImageUploadField";
 
 export function PackageForm({ pkg }: { pkg?: Package }) {
   return (
@@ -34,7 +36,12 @@ export function PackageForm({ pkg }: { pkg?: Package }) {
           defaultValue={pkg?.max_participants ?? undefined}
         />
       </div>
-      <Field label="URL imagen de portada" name="cover_image_url" defaultValue={pkg?.cover_image_url ?? ""} />
+      <ImageUploadField
+        label="Foto de portada"
+        name="cover_image_url"
+        defaultValue={pkg?.cover_image_url ?? ""}
+        action={uploadAdminImage}
+      />
       <label className="flex items-center gap-2 text-sm font-medium text-volcanic">
         <input type="checkbox" name="is_active" defaultChecked={pkg?.is_active ?? true} />
         Activo (visible en el catálogo)
