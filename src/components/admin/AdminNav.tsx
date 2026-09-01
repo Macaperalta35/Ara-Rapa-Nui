@@ -15,9 +15,13 @@ const links = [
   { href: "/admin/empresas", label: "Empresas" },
 ];
 
-export function AdminNav() {
+export function AdminNav({ isSuperAdmin }: { isSuperAdmin: boolean }) {
   const pathname = usePathname();
   const router = useRouter();
+
+  const allLinks = isSuperAdmin
+    ? [...links, { href: "/admin/administradores", label: "Administradores" }]
+    : links;
 
   async function logout() {
     const supabase = createClient();
@@ -31,7 +35,7 @@ export function AdminNav() {
       <div>
         <p className="px-2 font-display text-lg font-semibold text-volcanic">Ara Rapa Nui</p>
         <nav className="mt-6 flex flex-col gap-1">
-          {links.map((link) => {
+          {allLinks.map((link) => {
             const active = pathname === link.href;
             return (
               <Link

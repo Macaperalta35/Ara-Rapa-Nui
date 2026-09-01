@@ -6,11 +6,11 @@ export default async function AdminDashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  await requireAdminPage();
+  const { role } = await requireAdminPage();
 
   return (
     <div className="mx-auto flex min-h-[80vh] max-w-6xl gap-8 px-4 py-8 sm:px-6">
-      <AdminNav />
+      <AdminNav isSuperAdmin={role === "superadmin"} />
       <div className="flex-1">{children}</div>
     </div>
   );
