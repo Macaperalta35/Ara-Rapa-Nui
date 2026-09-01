@@ -1,16 +1,18 @@
 import "server-only";
-import type { OrderForPayment, OrderItemForPayment } from "./types";
 
 const MP_API = "https://api.mercadopago.com";
 
-function siteUrl() {
-  return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-}
+export type PreferenceParams = {
+  externalReference: string;
+  items: { title: string; quantity: number; unitPriceClp: number }[];
+  payerName: string;
+  payerEmail: string;
+  backUrls: { success: string; pending: string; failure: string };
+};
 
 /** Creates a real Mercado Pago Checkout Pro preference. Requires MERCADOPAGO_ACCESS_TOKEN. */
 export async function createRealPreference(
-  order: OrderForPayment,
-  items: OrderItemForPayment[],
+  params: PreferenceParams,
 ): Promise<{ initPoint: string; preferenceId: string }> {
   const res = await fetch(`${MP_API}/checkout/preferences`, {
     method: "POST",
@@ -19,21 +21,17 @@ export async function createRealPreference(
       Authorization: `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN}`,
     },
     body: JSON.stringify({
-      items: items.map((item) => ({
-        title: item.name_snapshot,
+      items: params.items.map((item) => ({
+        title: item.title,
         quantity: item.quantity,
-        unit_price: item.unit_price_clp,
+        unit_price: item.unitPriceClp,
         currency_id: "CLP",
       })),
-      payer: { name: order.customer_name, email: order.customer_email },
-      external_reference: order.id,
-      back_urls: {
-        success: `${siteUrl()}/checkout/confirmacion/${order.id}?status=success`,
-        pending: `${siteUrl()}/checkout/confirmacion/${order.id}?status=pending`,
-        failure: `${siteUrl()}/checkout/confirmacion/${order.id}?status=failure`,
-      },
+      payer: { name: params.payerName, email: params.payerEmail },
+      external_reference: params.externalReference,
+      back_urls: params.backUrls,
       auto_return: "approved",
-      notification_url: `${siteUrl()}/api/mercadopago/webhook`,
+      notification_url: `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/api/mercadopago/webhook`,
     }),
   });
 

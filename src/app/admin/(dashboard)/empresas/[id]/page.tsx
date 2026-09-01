@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { updateBusinessStatusAction, deleteBusinessAction } from "@/lib/actions/admin-businesses";
 import { BUSINESS_CATEGORIES, type BusinessStatus } from "@/lib/types/business";
+import { formatClp } from "@/lib/format";
 
 const STATUSES: BusinessStatus[] = ["pending", "approved", "rejected"];
 
@@ -37,6 +38,16 @@ export default async function AdminBusinessDetailPage({
       <p className="mt-1 text-sm text-volcanic/60">
         {categoryLabel} · contacto: {biz.contact_email}
       </p>
+
+      {biz.payment_status === "paid" ? (
+        <p className="mt-3 inline-block rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-800">
+          Publicación pagada — {formatClp(biz.listing_fee_clp)}
+        </p>
+      ) : (
+        <p className="mt-3 inline-block rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-700">
+          Sin pagar todavía — evita aprobar hasta confirmar el pago
+        </p>
+      )}
 
       <div className="mt-6 grid gap-4 rounded-2xl border border-sand-dark bg-white p-6 text-sm">
         <p className="whitespace-pre-line text-volcanic/80">{biz.description}</p>

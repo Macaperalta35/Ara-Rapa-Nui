@@ -1,5 +1,5 @@
 import { getSiteSettings, THEME_COLOR_VARS } from "@/lib/supabase/site-settings";
-import { updateSiteTheme, updateCategoryVisibility } from "@/lib/actions/site-settings";
+import { updateSiteTheme, updateCategoryVisibility, updateBusinessFee } from "@/lib/actions/site-settings";
 
 const CATEGORY_TOGGLES: { name: string; label: string }[] = [
   { name: "show_packages", label: "Paquetes turísticos" },
@@ -72,6 +72,35 @@ export default async function AppearancePage() {
           className="mt-6 rounded-full bg-terracotta px-6 py-2.5 text-sm font-semibold text-white transition-transform hover:scale-[1.02] hover:bg-terracotta-light active:scale-[0.98]"
         >
           Guardar categorías
+        </button>
+      </form>
+
+      <form
+        action={updateBusinessFee}
+        className="mt-6 max-w-2xl rounded-2xl border border-sand-dark bg-white p-6"
+      >
+        <h2 className="font-display text-lg font-semibold text-volcanic">
+          Tarifa de publicación de empresas
+        </h2>
+        <p className="mt-1 text-sm text-volcanic/60">
+          Lo que cobra cada negocio para aparecer en el directorio de empresas.
+        </p>
+        <label className="mt-4 flex flex-col gap-1 text-sm font-medium text-volcanic">
+          Tarifa (CLP)
+          <input
+            type="number"
+            name="business_listing_fee_clp"
+            min={0}
+            step={500}
+            defaultValue={settings.business_listing_fee_clp}
+            className="w-40 rounded-lg border border-sand-dark px-3 py-2 text-sm font-normal"
+          />
+        </label>
+        <button
+          type="submit"
+          className="mt-6 rounded-full bg-terracotta px-6 py-2.5 text-sm font-semibold text-white transition-transform hover:scale-[1.02] hover:bg-terracotta-light active:scale-[0.98]"
+        >
+          Guardar tarifa
         </button>
       </form>
     </div>

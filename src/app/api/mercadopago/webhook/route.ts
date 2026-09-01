@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { fetchPayment } from "@/lib/mercadopago/client";
 import { updateOrderStatus } from "@/lib/orders/update-status";
+import { updateBusinessPaymentStatus } from "@/lib/businesses/update-payment-status";
 
 // Mercado Pago calls this from its own servers — it can't be a Server
 // Action, so it stays a plain Route Handler. See the create-preference
@@ -23,6 +24,17 @@ export async function POST(request: NextRequest) {
     // webhook payload — the payload only tells us *which* payment changed.
     const payment = await fetchPayment(body.data.id);
     if (!payment.external_reference) {
+      return NextResponse.json({ ok: true }, { status: 200 });
+    }
+
+    // Business listing fees use a distinct external_reference prefix
+    // (see createBusinessPaymentPreference) so they route to a different
+    // table than order payments.
+    if (payment.external_reference.startsWith("business:")) {
+      const businessId = payment.external_reference.slice("business:".length);
+      if (payment.status === "approved") {
+        await updateBusinessPaymentStatus(businessId, "paid", String(payment.id));
+      }
       return NextResponse.json({ ok: true }, { status: 200 });
     }
 

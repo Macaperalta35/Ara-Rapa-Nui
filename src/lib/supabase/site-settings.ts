@@ -23,6 +23,7 @@ export const DEFAULT_SITE_SETTINGS = {
   show_resident_products: true,
   show_businesses: true,
   show_special_request: true,
+  business_listing_fee_clp: 15000,
 } as const;
 
 export type SiteSettings = typeof DEFAULT_SITE_SETTINGS;

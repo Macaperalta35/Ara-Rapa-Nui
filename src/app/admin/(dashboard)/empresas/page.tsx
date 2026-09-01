@@ -18,7 +18,7 @@ export default async function AdminBusinessesPage() {
   const supabase = await createClient();
   const { data: businesses } = await supabase
     .from("businesses")
-    .select("id, name, category, status, created_at")
+    .select("id, name, category, status, payment_status, listing_fee_clp, created_at")
     .order("created_at", { ascending: false });
 
   const categoryLabel = (value: string) =>
@@ -42,9 +42,20 @@ export default async function AdminBusinessesPage() {
                 <p className="font-medium text-volcanic">{biz.name}</p>
                 <p className="text-sm text-volcanic/60">{categoryLabel(biz.category)}</p>
               </div>
-              <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_COLOR[biz.status] ?? ""}`}>
-                {STATUS_LABEL[biz.status] ?? biz.status}
-              </span>
+              <div className="flex items-center gap-2">
+                <span
+                  className={`rounded-full px-2.5 py-1 text-xs font-medium ${
+                    biz.payment_status === "paid"
+                      ? "bg-emerald-100 text-emerald-800"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {biz.payment_status === "paid" ? "Pagada" : "Sin pagar"}
+                </span>
+                <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_COLOR[biz.status] ?? ""}`}>
+                  {STATUS_LABEL[biz.status] ?? biz.status}
+                </span>
+              </div>
             </Link>
           </li>
         ))}

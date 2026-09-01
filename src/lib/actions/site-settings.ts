@@ -52,3 +52,19 @@ export async function updateCategoryVisibility(formData: FormData) {
 
   revalidatePath("/", "layout");
 }
+
+export async function updateBusinessFee(formData: FormData) {
+  await requireAdminAction();
+
+  const feeClp = z.coerce.number().int().min(0).parse(formData.get("business_listing_fee_clp"));
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("site_settings")
+    .update({ business_listing_fee_clp: feeClp })
+    .eq("id", 1);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/empresas/publicar");
+  revalidatePath("/admin/apariencia");
+}
