@@ -151,6 +151,17 @@ export async function deleteProduct(id: string) {
   revalidatePath("/catalogo/productos-residentes");
 }
 
+/** Quick pause/resume without opening the full edit form — e.g. when stock runs out. */
+export async function toggleProductActive(id: string, isActive: boolean) {
+  await requireAdminAction();
+  const supabase = await createClient();
+  const { error } = await supabase.from("products").update({ is_active: isActive }).eq("id", id);
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/productos");
+  revalidatePath("/catalogo/productos");
+  revalidatePath("/catalogo/productos-residentes");
+}
+
 // Vehicle rentals -----------------------------------------------------------
 
 const vehicleRentalSchema = z.object({

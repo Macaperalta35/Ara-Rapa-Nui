@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { formatClp } from "@/lib/format";
@@ -29,12 +30,22 @@ export default async function AdminOrderDetailPage({
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-semibold text-volcanic">
-        Pedido de {order.customer_name}
-      </h1>
-      <p className="mt-1 text-sm text-volcanic/60">
-        {order.customer_email} · {order.customer_phone}
-      </p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="font-display text-2xl font-semibold text-volcanic">
+            Pedido de {order.customer_name}
+          </h1>
+          <p className="mt-1 text-sm text-volcanic/60">
+            {order.customer_email} · {order.customer_phone}
+          </p>
+        </div>
+        <Link
+          href={`/admin/pedidos/${id}/recibo`}
+          className="rounded-full border border-sand-dark px-4 py-2 text-sm font-medium text-volcanic hover:bg-sand"
+        >
+          Ver recibo
+        </Link>
+      </div>
 
       <div className="mt-6 rounded-2xl border border-sand-dark bg-white p-6">
         <ul className="flex flex-col gap-3">
