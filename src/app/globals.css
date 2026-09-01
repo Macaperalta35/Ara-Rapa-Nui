@@ -17,16 +17,16 @@
 @theme {
   --color-volcanic: #211d16;
   --color-volcanic-light: #3a332a;
-  --color-ocean: #0f7a80;
-  --color-ocean-light: #14a5a8;
+  --color-ocean: #0c8a90;
+  --color-ocean-light: #2bc4c4;
   --color-terracotta: #b3543a;
   --color-terracotta-light: #c97854;
-  --color-sunset: #e8792e;
+  --color-sunset: #f2894a;
   --color-sand: #f5efe0;
   --color-sand-dark: #e8dcc4;
-  --color-hibiscus: #d94f70;
-  --color-hibiscus-light: #ef7d97;
-  --color-palm: #3f7a53;
+  --color-hibiscus: #e0356d;
+  --color-hibiscus-light: #f47fa8;
+  --color-palm: #2f7d52;
 }
 
 body {

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getApprovedBusinesses } from "@/lib/supabase/businesses";
 import { BUSINESS_CATEGORIES } from "@/lib/types/business";
 import { getDictionary } from "@/lib/i18n/get-locale";
+import { CatalogPageHeader } from "@/components/catalog/CatalogPageHeader";
 
 export default async function BusinessDirectoryPage() {
   const [businesses, { dict }] = await Promise.all([getApprovedBusinesses(), getDictionary()]);
@@ -12,12 +13,10 @@ export default async function BusinessDirectoryPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h1 className="font-display text-3xl font-semibold text-volcanic">Empresas de Rapa Nui</h1>
-          <p className="mt-2 text-sm text-volcanic/60">
-            Negocios locales recomendados por la comunidad.
-          </p>
-        </div>
+        <CatalogPageHeader
+          title="Empresas de Rapa Nui"
+          subtitle="Negocios locales recomendados por la comunidad."
+        />
         <Link
           href="/empresas/publicar"
           className="rounded-full bg-terracotta px-5 py-2.5 text-sm font-semibold text-white transition-transform hover:scale-[1.03] hover:bg-terracotta-light active:scale-[0.98]"

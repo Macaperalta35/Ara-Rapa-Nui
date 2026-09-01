@@ -8,6 +8,7 @@ import {
 import { getDictionary, localize } from "@/lib/i18n/get-locale";
 import { CatalogCard } from "@/components/catalog/CatalogCard";
 import { PolynesianFlower } from "@/components/ui/PolynesianFlower";
+import { OceanWave } from "@/components/ui/OceanWave";
 import { getSiteSettings } from "@/lib/supabase/site-settings";
 
 export default async function HomePage() {
@@ -65,6 +66,8 @@ export default async function HomePage() {
             </Link>
           </div>
         </div>
+
+        <OceanWave className="pointer-events-none absolute -bottom-1 left-0 h-10 w-full text-sand sm:h-14" />
       </section>
 
       {settings.show_packages && (

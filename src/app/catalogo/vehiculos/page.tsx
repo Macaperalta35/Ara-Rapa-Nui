@@ -1,6 +1,7 @@
 import { getVehicleRentals } from "@/lib/supabase/catalog";
 import { getDictionary, localize } from "@/lib/i18n/get-locale";
 import { CatalogCard } from "@/components/catalog/CatalogCard";
+import { CatalogPageHeader } from "@/components/catalog/CatalogPageHeader";
 
 export default async function VehicleRentalsPage() {
   const [vehicles, { locale, dict }] = await Promise.all([
@@ -10,9 +11,7 @@ export default async function VehicleRentalsPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <h1 className="font-display text-3xl font-semibold text-volcanic">
-        {dict.home.sectionVehicleRentals}
-      </h1>
+      <CatalogPageHeader title={dict.home.sectionVehicleRentals} />
 
       {vehicles.length === 0 ? (
         <p className="mt-6 text-volcanic/60">{dict.common.empty}</p>

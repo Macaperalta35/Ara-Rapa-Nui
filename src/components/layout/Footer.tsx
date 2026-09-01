@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useTranslations } from "@/lib/i18n/LanguageProvider";
 import { PolynesianFlower } from "@/components/ui/PolynesianFlower";
+import { OceanWave } from "@/components/ui/OceanWave";
 import { AccountLink } from "./AccountLink";
 import type { CategoryVisibility } from "@/lib/supabase/site-settings";
 
@@ -11,6 +12,7 @@ export function Footer({ visibility }: { visibility: CategoryVisibility }) {
 
   return (
     <footer className="relative overflow-hidden border-t border-sand-dark/80 bg-volcanic text-sand/90">
+      <OceanWave className="pointer-events-none absolute -top-px left-0 h-6 w-full text-sand-dark/40" />
       <PolynesianFlower className="pointer-events-none absolute -bottom-8 -right-8 h-40 w-40 text-hibiscus/25" />
 
       <div className="relative mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-3">
