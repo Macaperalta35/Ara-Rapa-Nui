@@ -42,9 +42,9 @@ export function Footer() {
           rel="noopener noreferrer"
           className="underline hover:text-white"
         >
-          Lilith
+          🦇 Lilith
         </a>{" "}
-        con amor
+        con ❤️
       </div>
     </footer>
   );
