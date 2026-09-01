@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useTranslations } from "@/lib/i18n/LanguageProvider";
 import { PolynesianFlower } from "@/components/ui/PolynesianFlower";
 import { AccountLink } from "./AccountLink";
+import type { CategoryVisibility } from "@/lib/supabase/site-settings";
 
-export function Footer() {
+export function Footer({ visibility }: { visibility: CategoryVisibility }) {
   const t = useTranslations();
 
   return (
@@ -22,27 +23,41 @@ export function Footer() {
         </div>
 
         <div className="flex flex-col gap-2 text-sm">
-          <Link href="/catalogo/paquetes" className="hover:text-white">
-            {t.nav.packages}
-          </Link>
-          <Link href="/catalogo/experiencias" className="hover:text-white">
-            {t.nav.experiences}
-          </Link>
-          <Link href="/catalogo/productos" className="hover:text-white">
-            {t.nav.products}
-          </Link>
-          <Link href="/catalogo/vehiculos" className="hover:text-white">
-            {t.nav.vehicleRentals}
-          </Link>
-          <Link href="/catalogo/productos-residentes" className="hover:text-white">
-            {t.nav.residentProducts}
-          </Link>
-          <Link href="/empresas" className="hover:text-white">
-            {t.nav.businesses}
-          </Link>
-          <Link href="/pedido-especial" className="hover:text-white">
-            {t.nav.specialRequest}
-          </Link>
+          {visibility.showPackages && (
+            <Link href="/catalogo/paquetes" className="hover:text-white">
+              {t.nav.packages}
+            </Link>
+          )}
+          {visibility.showExperiences && (
+            <Link href="/catalogo/experiencias" className="hover:text-white">
+              {t.nav.experiences}
+            </Link>
+          )}
+          {visibility.showProducts && (
+            <Link href="/catalogo/productos" className="hover:text-white">
+              {t.nav.products}
+            </Link>
+          )}
+          {visibility.showVehicleRentals && (
+            <Link href="/catalogo/vehiculos" className="hover:text-white">
+              {t.nav.vehicleRentals}
+            </Link>
+          )}
+          {visibility.showResidentProducts && (
+            <Link href="/catalogo/productos-residentes" className="hover:text-white">
+              {t.nav.residentProducts}
+            </Link>
+          )}
+          {visibility.showBusinesses && (
+            <Link href="/empresas" className="hover:text-white">
+              {t.nav.businesses}
+            </Link>
+          )}
+          {visibility.showSpecialRequest && (
+            <Link href="/pedido-especial" className="hover:text-white">
+              {t.nav.specialRequest}
+            </Link>
+          )}
         </div>
 
         <div className="flex flex-col gap-2 text-sm text-sand/70">

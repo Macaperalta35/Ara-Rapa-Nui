@@ -8,9 +8,10 @@ import {
 import { getDictionary, localize } from "@/lib/i18n/get-locale";
 import { CatalogCard } from "@/components/catalog/CatalogCard";
 import { PolynesianFlower } from "@/components/ui/PolynesianFlower";
+import { getSiteSettings } from "@/lib/supabase/site-settings";
 
 export default async function HomePage() {
-  const [packages, experiences, products, residentProducts, vehicles, { locale, dict }] =
+  const [packages, experiences, products, residentProducts, vehicles, { locale, dict }, settings] =
     await Promise.all([
       getPackages(),
       getExperiences(),
@@ -18,6 +19,7 @@ export default async function HomePage() {
       getProducts("resident"),
       getVehicleRentals(),
       getDictionary(),
+      getSiteSettings(),
     ]);
 
   return (
@@ -65,81 +67,91 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <CatalogSection
-        title={dict.home.sectionPackages}
-        seeAllHref="/catalogo/paquetes"
-        items={packages.slice(0, 3).map((pkg) => ({
-          href: `/catalogo/paquetes/${pkg.slug}`,
-          name: localize(pkg, "name", locale),
-          description: localize(pkg, "description", locale) || null,
-          priceClp: pkg.price_clp,
-          imageUrl: pkg.cover_image_url,
-        }))}
-        locale={locale}
-        fromLabel={dict.common.from}
-        emptyLabel={dict.common.empty}
-      />
+      {settings.show_packages && (
+        <CatalogSection
+          title={dict.home.sectionPackages}
+          seeAllHref="/catalogo/paquetes"
+          items={packages.slice(0, 3).map((pkg) => ({
+            href: `/catalogo/paquetes/${pkg.slug}`,
+            name: localize(pkg, "name", locale),
+            description: localize(pkg, "description", locale) || null,
+            priceClp: pkg.price_clp,
+            imageUrl: pkg.cover_image_url,
+          }))}
+          locale={locale}
+          fromLabel={dict.common.from}
+          emptyLabel={dict.common.empty}
+        />
+      )}
 
-      <CatalogSection
-        title={dict.home.sectionExperiences}
-        seeAllHref="/catalogo/experiencias"
-        items={experiences.slice(0, 3).map((exp) => ({
-          href: `/catalogo/experiencias/${exp.slug}`,
-          name: localize(exp, "name", locale),
-          description: localize(exp, "description", locale) || null,
-          priceClp: exp.price_clp,
-          imageUrl: exp.cover_image_url,
-        }))}
-        locale={locale}
-        fromLabel={dict.common.from}
-        emptyLabel={dict.common.empty}
-      />
+      {settings.show_experiences && (
+        <CatalogSection
+          title={dict.home.sectionExperiences}
+          seeAllHref="/catalogo/experiencias"
+          items={experiences.slice(0, 3).map((exp) => ({
+            href: `/catalogo/experiencias/${exp.slug}`,
+            name: localize(exp, "name", locale),
+            description: localize(exp, "description", locale) || null,
+            priceClp: exp.price_clp,
+            imageUrl: exp.cover_image_url,
+          }))}
+          locale={locale}
+          fromLabel={dict.common.from}
+          emptyLabel={dict.common.empty}
+        />
+      )}
 
-      <CatalogSection
-        title={dict.home.sectionProducts}
-        seeAllHref="/catalogo/productos"
-        items={products.slice(0, 3).map((product) => ({
-          href: `/catalogo/productos/${product.slug}`,
-          name: localize(product, "name", locale),
-          description: localize(product, "description", locale) || null,
-          priceClp: product.price_clp,
-          imageUrl: product.cover_image_url,
-        }))}
-        locale={locale}
-        fromLabel={dict.common.price}
-        emptyLabel={dict.common.empty}
-      />
+      {settings.show_products && (
+        <CatalogSection
+          title={dict.home.sectionProducts}
+          seeAllHref="/catalogo/productos"
+          items={products.slice(0, 3).map((product) => ({
+            href: `/catalogo/productos/${product.slug}`,
+            name: localize(product, "name", locale),
+            description: localize(product, "description", locale) || null,
+            priceClp: product.price_clp,
+            imageUrl: product.cover_image_url,
+          }))}
+          locale={locale}
+          fromLabel={dict.common.price}
+          emptyLabel={dict.common.empty}
+        />
+      )}
 
-      <CatalogSection
-        title={dict.home.sectionVehicleRentals}
-        seeAllHref="/catalogo/vehiculos"
-        items={vehicles.slice(0, 3).map((vehicle) => ({
-          href: `/catalogo/vehiculos/${vehicle.slug}`,
-          name: localize(vehicle, "name", locale),
-          description: localize(vehicle, "description", locale) || null,
-          priceClp: vehicle.price_clp_per_day,
-          imageUrl: vehicle.cover_image_url,
-        }))}
-        locale={locale}
-        fromLabel={dict.common.from}
-        priceSuffix={dict.common.perDay}
-        emptyLabel={dict.common.empty}
-      />
+      {settings.show_vehicle_rentals && (
+        <CatalogSection
+          title={dict.home.sectionVehicleRentals}
+          seeAllHref="/catalogo/vehiculos"
+          items={vehicles.slice(0, 3).map((vehicle) => ({
+            href: `/catalogo/vehiculos/${vehicle.slug}`,
+            name: localize(vehicle, "name", locale),
+            description: localize(vehicle, "description", locale) || null,
+            priceClp: vehicle.price_clp_per_day,
+            imageUrl: vehicle.cover_image_url,
+          }))}
+          locale={locale}
+          fromLabel={dict.common.from}
+          priceSuffix={dict.common.perDay}
+          emptyLabel={dict.common.empty}
+        />
+      )}
 
-      <CatalogSection
-        title={dict.home.sectionResidentProducts}
-        seeAllHref="/catalogo/productos-residentes"
-        items={residentProducts.slice(0, 3).map((product) => ({
-          href: `/catalogo/productos/${product.slug}`,
-          name: localize(product, "name", locale),
-          description: localize(product, "description", locale) || null,
-          priceClp: product.price_clp,
-          imageUrl: product.cover_image_url,
-        }))}
-        locale={locale}
-        fromLabel={dict.common.price}
-        emptyLabel={dict.common.empty}
-      />
+      {settings.show_resident_products && (
+        <CatalogSection
+          title={dict.home.sectionResidentProducts}
+          seeAllHref="/catalogo/productos-residentes"
+          items={residentProducts.slice(0, 3).map((product) => ({
+            href: `/catalogo/productos/${product.slug}`,
+            name: localize(product, "name", locale),
+            description: localize(product, "description", locale) || null,
+            priceClp: product.price_clp,
+            imageUrl: product.cover_image_url,
+          }))}
+          locale={locale}
+          fromLabel={dict.common.price}
+          emptyLabel={dict.common.empty}
+        />
+      )}
     </div>
   );
 }

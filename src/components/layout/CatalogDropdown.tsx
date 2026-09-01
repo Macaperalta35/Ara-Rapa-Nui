@@ -3,19 +3,25 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "@/lib/i18n/LanguageProvider";
+import type { CategoryVisibility } from "@/lib/supabase/site-settings";
 
-export function CatalogDropdown() {
+export function CatalogDropdown({ visibility }: { visibility: CategoryVisibility }) {
   const t = useTranslations();
   const [open, setOpen] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const items = [
-    { href: "/catalogo/paquetes", label: t.nav.packages },
-    { href: "/catalogo/experiencias", label: t.nav.experiences },
-    { href: "/catalogo/productos", label: t.nav.products },
-    { href: "/catalogo/vehiculos", label: t.nav.vehicleRentals },
-    { href: "/catalogo/productos-residentes", label: t.nav.residentProducts },
-  ];
+    visibility.showPackages && { href: "/catalogo/paquetes", label: t.nav.packages },
+    visibility.showExperiences && { href: "/catalogo/experiencias", label: t.nav.experiences },
+    visibility.showProducts && { href: "/catalogo/productos", label: t.nav.products },
+    visibility.showVehicleRentals && { href: "/catalogo/vehiculos", label: t.nav.vehicleRentals },
+    visibility.showResidentProducts && {
+      href: "/catalogo/productos-residentes",
+      label: t.nav.residentProducts,
+    },
+  ].filter(Boolean) as { href: string; label: string }[];
+
+  if (items.length === 0) return null;
 
   function scheduleClose() {
     closeTimer.current = setTimeout(() => setOpen(false), 120);

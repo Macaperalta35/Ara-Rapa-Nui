@@ -13,6 +13,7 @@ const links = [
   { href: "/admin/productos", label: "Productos" },
   { href: "/admin/vehiculos", label: "Vehículos" },
   { href: "/admin/empresas", label: "Empresas" },
+  { href: "/admin/apariencia", label: "Apariencia" },
 ];
 
 export function AdminNav({ isSuperAdmin }: { isSuperAdmin: boolean }) {
