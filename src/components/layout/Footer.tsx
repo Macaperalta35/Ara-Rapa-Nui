@@ -33,6 +33,19 @@ export function Footer() {
           <p>Rapa Nui, Chile</p>
         </div>
       </div>
+
+      <div className="border-t border-white/10 py-4 text-center text-xs text-sand/60">
+        Creado por{" "}
+        <a
+          href="https://github.com/Macaperalta35"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline hover:text-white"
+        >
+          Lilith
+        </a>{" "}
+        con amor
+      </div>
     </footer>
   );
 }
