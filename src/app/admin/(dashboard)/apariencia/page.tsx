@@ -1,5 +1,10 @@
 import { getSiteSettings, THEME_COLOR_VARS } from "@/lib/supabase/site-settings";
-import { updateSiteTheme, updateCategoryVisibility, updateBusinessFee } from "@/lib/actions/site-settings";
+import {
+  updateSiteTheme,
+  updateCategoryVisibility,
+  updateBusinessFee,
+  updateReferralReward,
+} from "@/lib/actions/site-settings";
 
 const CATEGORY_TOGGLES: { name: string; label: string }[] = [
   { name: "show_packages", label: "Paquetes turísticos" },
@@ -101,6 +106,33 @@ export default async function AppearancePage() {
           className="mt-6 rounded-full bg-terracotta px-6 py-2.5 text-sm font-semibold text-white transition-transform hover:scale-[1.02] hover:bg-terracotta-light active:scale-[0.98]"
         >
           Guardar tarifa
+        </button>
+      </form>
+
+      <form
+        action={updateReferralReward}
+        className="mt-6 max-w-2xl rounded-2xl border border-sand-dark bg-white p-6"
+      >
+        <h2 className="font-display text-lg font-semibold text-volcanic">Recompensa por referidos</h2>
+        <p className="mt-1 text-sm text-volcanic/60">
+          Crédito que gana un cliente cuando la persona que invitó hace su primera compra pagada.
+        </p>
+        <label className="mt-4 flex flex-col gap-1 text-sm font-medium text-volcanic">
+          Recompensa (CLP)
+          <input
+            type="number"
+            name="referral_reward_clp"
+            min={0}
+            step={500}
+            defaultValue={settings.referral_reward_clp}
+            className="w-40 rounded-lg border border-sand-dark px-3 py-2 text-sm font-normal"
+          />
+        </label>
+        <button
+          type="submit"
+          className="mt-6 rounded-full bg-terracotta px-6 py-2.5 text-sm font-semibold text-white transition-transform hover:scale-[1.02] hover:bg-terracotta-light active:scale-[0.98]"
+        >
+          Guardar recompensa
         </button>
       </form>
     </div>

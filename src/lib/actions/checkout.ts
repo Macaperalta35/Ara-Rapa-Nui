@@ -17,6 +17,7 @@ export type CheckoutInput = {
   items: CartItem[];
   guest: { name: string; email: string; phone: string };
   locale: "es" | "en";
+  useCredit?: boolean;
 };
 
 export type CheckoutResult = { orderId: string; paymentUrl: string } | { error: string };
@@ -150,7 +151,7 @@ export async function submitCheckout(input: CheckoutInput): Promise<CheckoutResu
     }
   }
 
-  const totalClp = validatedItems.reduce(
+  const subtotalClp = validatedItems.reduce(
     (sum, item) => sum + item.unit_price_clp * item.quantity,
     0,
   );
@@ -163,6 +164,27 @@ export async function submitCheckout(input: CheckoutInput): Promise<CheckoutResu
     data: { user: loggedInCustomer },
   } = await sessionClient.auth.getUser();
 
+  // Referral credit: redeem atomically up front (before the order exists)
+  // so the order's stored total always reflects what was actually charged.
+  let creditApplied = 0;
+  if (input.useCredit && loggedInCustomer) {
+    const { data: customer } = await supabase
+      .from("customers")
+      .select("credit_clp")
+      .eq("id", loggedInCustomer.id)
+      .maybeSingle();
+    const wanted = Math.min(customer?.credit_clp ?? 0, subtotalClp);
+    if (wanted > 0) {
+      const { data: ok } = await supabase.rpc("redeem_credit", {
+        p_customer_id: loggedInCustomer.id,
+        p_amount: wanted,
+      });
+      if (ok) creditApplied = wanted;
+    }
+  }
+
+  const totalClp = subtotalClp - creditApplied;
+
   const { data: order, error: orderError } = await supabase
     .from("orders")
     .insert({
@@ -171,11 +193,15 @@ export async function submitCheckout(input: CheckoutInput): Promise<CheckoutResu
       customer_phone: guest.data.phone,
       customer_id: loggedInCustomer?.id ?? null,
       total_clp: totalClp,
+      credit_applied_clp: creditApplied,
     })
     .select()
     .single();
 
   if (orderError || !order) {
+    if (creditApplied > 0 && loggedInCustomer) {
+      await supabase.rpc("add_credit", { p_customer_id: loggedInCustomer.id, p_amount: creditApplied });
+    }
     return { error: "No pudimos crear el pedido. Intenta nuevamente." };
   }
 
@@ -184,14 +210,25 @@ export async function submitCheckout(input: CheckoutInput): Promise<CheckoutResu
     .insert(validatedItems.map((item) => ({ ...item, order_id: order.id })));
 
   if (itemsError) {
+    if (creditApplied > 0 && loggedInCustomer) {
+      await supabase.rpc("add_credit", { p_customer_id: loggedInCustomer.id, p_amount: creditApplied });
+    }
     return { error: "No pudimos guardar los ítems del pedido." };
   }
 
-  // From here on, anything that fails must restore whatever stock we've
-  // already reserved and mark the order failed — otherwise a payment
-  // outage or a mid-loop stock race permanently shrinks inventory for an
-  // order that never got paid.
+  // From here on, anything that fails must restore whatever stock/credit
+  // we've already reserved and mark the order failed — otherwise a payment
+  // outage or a mid-loop stock race permanently loses inventory or credit
+  // for an order that never got paid.
   const decremented: { item_id: string; quantity: number }[] = [];
+
+  async function rollback() {
+    await restoreProductStock(decremented);
+    if (creditApplied > 0 && loggedInCustomer) {
+      await supabase.rpc("add_credit", { p_customer_id: loggedInCustomer.id, p_amount: creditApplied });
+    }
+    await updateOrderStatus(order.id, "failed");
+  }
 
   for (const item of validatedItems) {
     if (item.item_type !== "product") continue;
@@ -200,14 +237,30 @@ export async function submitCheckout(input: CheckoutInput): Promise<CheckoutResu
       p_qty: item.quantity,
     });
     if (!ok) {
-      await restoreProductStock(decremented);
-      await updateOrderStatus(order.id, "failed");
+      await rollback();
       return { error: `"${item.name_snapshot}" se agotó mientras completabas el pedido.` };
     }
     decremented.push({ item_id: item.item_id, quantity: item.quantity });
   }
 
+  // Mercado Pago (and our mock flow) require at least a token amount to
+  // process — a fully credit-covered order skips payment entirely.
+  if (totalClp <= 0) {
+    await updateOrderStatus(order.id, "paid");
+    return { orderId: order.id, paymentUrl: `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/checkout/confirmacion/${order.id}?status=success` };
+  }
+
   try {
+    // Mercado Pago computes the charge from the items array itself, not
+    // from a separate total — so once credit changes the amount owed, we
+    // can't pass the original per-item prices (their sum would be the
+    // pre-credit subtotal, over-charging the customer). Collapse to one
+    // line item for the discounted amount instead of trying to prorate
+    // the discount across the original lines.
+    const paymentItems = creditApplied > 0
+      ? [{ name_snapshot: "Pedido Ara Rapa Nui", unit_price_clp: totalClp, quantity: 1 }]
+      : validatedItems;
+
     const { initPoint, preferenceId } = await createPaymentPreference(
       {
         id: order.id,
@@ -215,7 +268,7 @@ export async function submitCheckout(input: CheckoutInput): Promise<CheckoutResu
         customer_email: guest.data.email,
         total_clp: totalClp,
       },
-      validatedItems,
+      paymentItems,
     );
 
     if (preferenceId) {
@@ -231,8 +284,7 @@ export async function submitCheckout(input: CheckoutInput): Promise<CheckoutResu
     return { orderId: order.id, paymentUrl: initPoint };
   } catch (err) {
     console.error(`checkout: payment preference creation failed for ${order.id}:`, err);
-    await restoreProductStock(decremented);
-    await updateOrderStatus(order.id, "failed");
+    await rollback();
     return { error: "No pudimos iniciar el pago. Intenta nuevamente en unos minutos." };
   }
 }

@@ -68,3 +68,18 @@ export async function updateBusinessFee(formData: FormData) {
   revalidatePath("/empresas/publicar");
   revalidatePath("/admin/apariencia");
 }
+
+export async function updateReferralReward(formData: FormData) {
+  await requireAdminAction();
+
+  const rewardClp = z.coerce.number().int().min(0).parse(formData.get("referral_reward_clp"));
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("site_settings")
+    .update({ referral_reward_clp: rewardClp })
+    .eq("id", 1);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/admin/apariencia");
+}

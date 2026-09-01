@@ -2,13 +2,15 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useTranslations } from "@/lib/i18n/LanguageProvider";
 
 export default function RegisterPage() {
   const t = useTranslations();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const referredByCode = searchParams.get("ref");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -26,7 +28,7 @@ export default function RegisterPage() {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { name, phone } },
+      options: { data: { name, phone, referred_by_code: referredByCode ?? undefined } },
     });
 
     if (error) {
@@ -60,6 +62,9 @@ export default function RegisterPage() {
   return (
     <div className="mx-auto max-w-sm px-4 py-16 sm:px-6">
       <h1 className="font-display text-2xl font-semibold text-volcanic">{t.account.register}</h1>
+      {referredByCode && (
+        <p className="mt-2 text-sm text-ocean">Te invitó un amigo — ¡bienvenido a Ara Rapa Nui!</p>
+      )}
 
       <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
         <label className="flex flex-col gap-1 text-sm font-medium text-volcanic">

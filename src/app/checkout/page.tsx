@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useCart } from "@/lib/cart/cart-context";
 import { useTranslations, useLocale } from "@/lib/i18n/LanguageProvider";
 import { formatClp } from "@/lib/format";
@@ -13,7 +12,6 @@ export default function CheckoutPage() {
   const { items, totalClp, clear } = useCart();
   const t = useTranslations();
   const { locale } = useLocale();
-  const router = useRouter();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -21,6 +19,8 @@ export default function CheckoutPage() {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [creditClp, setCreditClp] = useState(0);
+  const [useCredit, setUseCredit] = useState(true);
 
   useEffect(() => {
     const supabase = createClient();
@@ -30,11 +30,12 @@ export default function CheckoutPage() {
       setEmail(data.user.email ?? "");
       const { data: customer } = await supabase
         .from("customers")
-        .select("name, phone")
+        .select("name, phone, credit_clp")
         .eq("id", data.user.id)
         .maybeSingle();
       if (customer?.name) setName(customer.name);
       if (customer?.phone) setPhone(customer.phone);
+      if (customer?.credit_clp) setCreditClp(customer.credit_clp);
     });
   }, []);
 
@@ -46,6 +47,9 @@ export default function CheckoutPage() {
     );
   }
 
+  const creditApplied = loggedIn && useCredit ? Math.min(creditClp, totalClp) : 0;
+  const totalAfterCredit = totalClp - creditApplied;
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setPending(true);
@@ -56,6 +60,7 @@ export default function CheckoutPage() {
         items,
         guest: { name, email, phone },
         locale,
+        useCredit: loggedIn && useCredit,
       });
 
       if ("error" in result) {
@@ -120,6 +125,13 @@ export default function CheckoutPage() {
             />
           </label>
 
+          {loggedIn && creditClp > 0 && (
+            <label className="flex items-center gap-2 rounded-lg border border-sand-dark bg-sand p-3 text-sm font-medium text-volcanic">
+              <input type="checkbox" checked={useCredit} onChange={(e) => setUseCredit(e.target.checked)} />
+              Usar mi crédito de referidos ({formatClp(creditClp)} disponible)
+            </label>
+          )}
+
           {error && <p className="text-sm text-red-600">{error}</p>}
 
           <button
@@ -148,9 +160,15 @@ export default function CheckoutPage() {
             </li>
           ))}
         </ul>
+        {creditApplied > 0 && (
+          <div className="mt-3 flex justify-between text-sm text-ocean">
+            <span>Crédito aplicado</span>
+            <span>-{formatClp(creditApplied)}</span>
+          </div>
+        )}
         <div className="mt-4 flex justify-between border-t border-sand-dark pt-4 font-medium">
           <span>{t.common.total}</span>
-          <span className="font-display text-lg text-terracotta">{formatClp(totalClp)}</span>
+          <span className="font-display text-lg text-terracotta">{formatClp(totalAfterCredit)}</span>
         </div>
       </div>
     </div>
