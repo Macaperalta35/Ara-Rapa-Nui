@@ -5,6 +5,7 @@ import { useTranslations } from "@/lib/i18n/LanguageProvider";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { CartIcon } from "./CartIcon";
 import { CatalogDropdown } from "./CatalogDropdown";
+import { PolynesianFlower } from "@/components/ui/PolynesianFlower";
 
 export function Header() {
   const t = useTranslations();
@@ -22,7 +23,8 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-sand-dark/80 bg-sand/95 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-4 py-4 sm:px-6">
-        <Link href="/" className="font-display text-xl font-semibold text-volcanic">
+        <Link href="/" className="flex items-center gap-2 font-display text-xl font-semibold text-volcanic">
+          <PolynesianFlower className="h-6 w-6 shrink-0 text-hibiscus" />
           Ara Rapa Nui
         </Link>
 

@@ -24,11 +24,15 @@ export default async function HomePage() {
     <div>
       <section className="relative overflow-hidden bg-volcanic text-white">
         <PolynesianFlower
-          className="animate-sway pointer-events-none absolute -right-10 -top-16 h-72 w-72 text-hibiscus/10"
+          className="animate-sway pointer-events-none absolute -right-6 -top-10 h-64 w-64 text-hibiscus/40"
         />
         <PolynesianFlower
-          className="animate-sway pointer-events-none absolute -bottom-20 left-[-4rem] h-64 w-64 text-ocean/10"
+          className="animate-sway pointer-events-none absolute -bottom-12 left-[-2rem] h-56 w-56 text-ocean-light/35"
           style={{ animationDelay: "1.5s" }}
+        />
+        <PolynesianFlower
+          className="animate-sway pointer-events-none absolute right-1/4 bottom-0 hidden h-28 w-28 text-sunset/30 md:block"
+          style={{ animationDelay: "3s" }}
         />
 
         <div className="relative mx-auto max-w-6xl px-4 py-24 sm:px-6">
@@ -166,8 +170,8 @@ function CatalogSection({
   return (
     <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <PolynesianFlower className="h-5 w-5 text-hibiscus" />
+        <div className="flex items-center gap-2.5">
+          <PolynesianFlower className="h-7 w-7 shrink-0 text-hibiscus" />
           <h2 className="font-display text-2xl font-semibold text-volcanic">{title}</h2>
         </div>
         <Link href={seeAllHref} className="text-sm font-medium text-ocean hover:underline">

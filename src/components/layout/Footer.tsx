@@ -2,15 +2,21 @@
 
 import Link from "next/link";
 import { useTranslations } from "@/lib/i18n/LanguageProvider";
+import { PolynesianFlower } from "@/components/ui/PolynesianFlower";
 
 export function Footer() {
   const t = useTranslations();
 
   return (
-    <footer className="border-t border-sand-dark/80 bg-volcanic text-sand/90">
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-3">
+    <footer className="relative overflow-hidden border-t border-sand-dark/80 bg-volcanic text-sand/90">
+      <PolynesianFlower className="pointer-events-none absolute -bottom-8 -right-8 h-40 w-40 text-hibiscus/25" />
+
+      <div className="relative mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-3">
         <div>
-          <p className="font-display text-lg font-semibold text-white">Ara Rapa Nui</p>
+          <p className="flex items-center gap-2 font-display text-lg font-semibold text-white">
+            <PolynesianFlower className="h-5 w-5 shrink-0 text-hibiscus" />
+            Ara Rapa Nui
+          </p>
           <p className="mt-2 text-sm text-sand/70">{t.home.heroSubtitle}</p>
         </div>
 
