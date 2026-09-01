@@ -33,12 +33,12 @@ export default async function MockPaymentPage({
       </p>
       <div className="mt-8 flex flex-col gap-3">
         <form action={approve}>
-          <button className="w-full rounded-full bg-terracotta px-6 py-3 text-sm font-semibold text-white hover:bg-terracotta-light">
+          <button className="w-full rounded-full bg-terracotta px-6 py-3 text-sm font-semibold text-white transition-transform hover:scale-[1.03] hover:bg-terracotta-light active:scale-[0.98]">
             ✓ Aprobar pago
           </button>
         </form>
         <form action={reject}>
-          <button className="w-full rounded-full border border-terracotta px-6 py-3 text-sm font-semibold text-terracotta hover:bg-terracotta/10">
+          <button className="w-full rounded-full border border-terracotta px-6 py-3 text-sm font-semibold text-terracotta transition-transform hover:scale-[1.03] hover:bg-terracotta/10 active:scale-[0.98]">
             ✕ Rechazar pago
           </button>
         </form>

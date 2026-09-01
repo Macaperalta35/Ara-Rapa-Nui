@@ -30,6 +30,9 @@ export function Footer() {
           <Link href="/catalogo/productos-residentes" className="hover:text-white">
             {t.nav.residentProducts}
           </Link>
+          <Link href="/empresas" className="hover:text-white">
+            {t.nav.businesses}
+          </Link>
           <Link href="/pedido-especial" className="hover:text-white">
             {t.nav.specialRequest}
           </Link>

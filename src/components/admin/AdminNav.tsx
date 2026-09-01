@@ -12,6 +12,7 @@ const links = [
   { href: "/admin/experiencias", label: "Experiencias" },
   { href: "/admin/productos", label: "Productos" },
   { href: "/admin/vehiculos", label: "Vehículos" },
+  { href: "/admin/empresas", label: "Empresas" },
 ];
 
 export function AdminNav() {

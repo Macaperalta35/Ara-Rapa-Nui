@@ -38,7 +38,7 @@ export default async function OrderConfirmationPage({
 
       <Link
         href="/"
-        className="mt-8 inline-block rounded-full bg-terracotta px-6 py-3 text-sm font-semibold text-white hover:bg-terracotta-light"
+        className="mt-8 inline-block rounded-full bg-terracotta px-6 py-3 text-sm font-semibold text-white transition-transform hover:scale-[1.03] hover:bg-terracotta-light active:scale-[0.98]"
       >
         {dict.confirmation.backHome}
       </Link>

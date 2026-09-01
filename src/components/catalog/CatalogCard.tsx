@@ -26,7 +26,7 @@ export function CatalogCard({
   return (
     <Link
       href={href}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-sand-dark bg-white transition-shadow hover:shadow-lg"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-sand-dark bg-white transition-all duration-300 hover:-translate-y-1 hover:border-terracotta/40 hover:shadow-xl"
     >
       <div className="aspect-[4/3] w-full overflow-hidden bg-sand-dark">
         {imageUrl ? (

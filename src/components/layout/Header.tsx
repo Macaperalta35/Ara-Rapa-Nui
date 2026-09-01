@@ -4,16 +4,18 @@ import Link from "next/link";
 import { useTranslations } from "@/lib/i18n/LanguageProvider";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { CartIcon } from "./CartIcon";
+import { CatalogDropdown } from "./CatalogDropdown";
 
 export function Header() {
   const t = useTranslations();
 
-  const links = [
+  const mobileLinks = [
     { href: "/catalogo/paquetes", label: t.nav.packages },
     { href: "/catalogo/experiencias", label: t.nav.experiences },
     { href: "/catalogo/productos", label: t.nav.products },
     { href: "/catalogo/vehiculos", label: t.nav.vehicleRentals },
     { href: "/catalogo/productos-residentes", label: t.nav.residentProducts },
+    { href: "/empresas", label: t.nav.businesses },
     { href: "/pedido-especial", label: t.nav.specialRequest },
   ];
 
@@ -24,16 +26,20 @@ export function Header() {
           Ara Rapa Nui
         </Link>
 
-        <nav className="hidden flex-wrap items-center gap-x-5 gap-y-1 lg:flex">
-          {links.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-sm font-medium text-volcanic/80 transition-colors hover:text-ocean"
-            >
-              {link.label}
-            </Link>
-          ))}
+        <nav className="hidden items-center gap-6 lg:flex">
+          <CatalogDropdown />
+          <Link
+            href="/empresas"
+            className="text-sm font-medium text-volcanic/80 transition-colors hover:text-ocean"
+          >
+            {t.nav.businesses}
+          </Link>
+          <Link
+            href="/pedido-especial"
+            className="text-sm font-medium text-volcanic/80 transition-colors hover:text-ocean"
+          >
+            {t.nav.specialRequest}
+          </Link>
         </nav>
 
         <div className="flex items-center gap-5">
@@ -43,7 +49,7 @@ export function Header() {
       </div>
 
       <nav className="flex items-center gap-4 overflow-x-auto border-t border-sand-dark/60 px-4 py-2 lg:hidden">
-        {links.map((link) => (
+        {mobileLinks.map((link) => (
           <Link
             key={link.href}
             href={link.href}

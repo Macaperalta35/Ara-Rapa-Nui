@@ -191,7 +191,7 @@ export function AddToCartForm(props: Props) {
       <button
         onClick={handleAdd}
         disabled={outOfStock}
-        className="rounded-full bg-terracotta px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-terracotta-light disabled:cursor-not-allowed disabled:opacity-50"
+        className="rounded-full bg-terracotta px-5 py-3 text-sm font-semibold text-white transition-all hover:scale-[1.03] hover:bg-terracotta-light active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
       >
         {outOfStock ? "Sin stock" : added ? "✓ " + t.common.addToCart : t.common.addToCart}
       </button>

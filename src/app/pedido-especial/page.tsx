@@ -63,7 +63,7 @@ export default function SpecialRequestPage() {
         <button
           type="submit"
           disabled={pending}
-          className="mt-2 rounded-full bg-terracotta px-6 py-3 text-sm font-semibold text-white hover:bg-terracotta-light disabled:opacity-60"
+          className="mt-2 rounded-full bg-terracotta px-6 py-3 text-sm font-semibold text-white transition-transform hover:scale-[1.03] hover:bg-terracotta-light active:scale-[0.98] disabled:opacity-60"
         >
           {pending ? t.checkout.processing : t.common.submit}
         </button>

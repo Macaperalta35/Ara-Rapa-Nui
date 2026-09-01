@@ -6,6 +6,7 @@ const es = {
     products: "Productos",
     vehicleRentals: "Arriendo de vehículos",
     residentProducts: "Productos residentes",
+    businesses: "Empresas",
     specialRequest: "Pedido especial",
     cart: "Carrito",
   },

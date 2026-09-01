@@ -8,6 +8,7 @@ const en: typeof es = {
     products: "Products",
     vehicleRentals: "Vehicle rentals",
     residentProducts: "Resident products",
+    businesses: "Businesses",
     specialRequest: "Custom request",
     cart: "Cart",
   },

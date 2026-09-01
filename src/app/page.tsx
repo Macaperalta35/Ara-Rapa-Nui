@@ -7,6 +7,7 @@ import {
 } from "@/lib/supabase/catalog";
 import { getDictionary, localize } from "@/lib/i18n/get-locale";
 import { CatalogCard } from "@/components/catalog/CatalogCard";
+import { PolynesianFlower } from "@/components/ui/PolynesianFlower";
 
 export default async function HomePage() {
   const [packages, experiences, products, residentProducts, vehicles, { locale, dict }] =
@@ -22,19 +23,37 @@ export default async function HomePage() {
   return (
     <div>
       <section className="relative overflow-hidden bg-volcanic text-white">
-        <div className="mx-auto max-w-6xl px-4 py-24 sm:px-6">
-          <h1 className="font-display text-4xl font-semibold sm:text-5xl">{dict.home.heroTitle}</h1>
-          <p className="mt-4 max-w-xl text-lg text-sand/85">{dict.home.heroSubtitle}</p>
-          <div className="mt-8 flex flex-wrap gap-4">
+        <PolynesianFlower
+          className="animate-sway pointer-events-none absolute -right-10 -top-16 h-72 w-72 text-hibiscus/10"
+        />
+        <PolynesianFlower
+          className="animate-sway pointer-events-none absolute -bottom-20 left-[-4rem] h-64 w-64 text-ocean/10"
+          style={{ animationDelay: "1.5s" }}
+        />
+
+        <div className="relative mx-auto max-w-6xl px-4 py-24 sm:px-6">
+          <h1 className="font-display animate-fade-in-up text-4xl font-semibold sm:text-5xl">
+            {dict.home.heroTitle}
+          </h1>
+          <p
+            className="animate-fade-in-up mt-4 max-w-xl text-lg text-sand/85"
+            style={{ animationDelay: "100ms" }}
+          >
+            {dict.home.heroSubtitle}
+          </p>
+          <div
+            className="animate-fade-in-up mt-8 flex flex-wrap gap-4"
+            style={{ animationDelay: "200ms" }}
+          >
             <Link
               href="/catalogo/paquetes"
-              className="rounded-full bg-terracotta px-6 py-3 text-sm font-semibold text-white hover:bg-terracotta-light"
+              className="rounded-full bg-terracotta px-6 py-3 text-sm font-semibold text-white transition-transform hover:scale-[1.04] hover:bg-terracotta-light active:scale-[0.97]"
             >
               {dict.home.ctaExplore}
             </Link>
             <Link
               href="/pedido-especial"
-              className="rounded-full border border-white/40 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10"
+              className="rounded-full border border-white/40 px-6 py-3 text-sm font-semibold text-white transition-transform hover:scale-[1.04] hover:bg-white/10 active:scale-[0.97]"
             >
               {dict.home.ctaSpecialRequest}
             </Link>
@@ -147,7 +166,10 @@ function CatalogSection({
   return (
     <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
       <div className="flex items-center justify-between">
-        <h2 className="font-display text-2xl font-semibold text-volcanic">{title}</h2>
+        <div className="flex items-center gap-2">
+          <PolynesianFlower className="h-5 w-5 text-hibiscus" />
+          <h2 className="font-display text-2xl font-semibold text-volcanic">{title}</h2>
+        </div>
         <Link href={seeAllHref} className="text-sm font-medium text-ocean hover:underline">
           Ver todo →
         </Link>
@@ -157,14 +179,14 @@ function CatalogSection({
         <p className="mt-6 text-volcanic/60">{emptyLabel}</p>
       ) : (
         <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((item) => (
-            <CatalogCard
+          {items.map((item, i) => (
+            <div
               key={item.href}
-              locale={locale}
-              fromLabel={fromLabel}
-              priceSuffix={priceSuffix}
-              {...item}
-            />
+              className="animate-fade-in-up"
+              style={{ animationDelay: `${i * 70}ms` }}
+            >
+              <CatalogCard locale={locale} fromLabel={fromLabel} priceSuffix={priceSuffix} {...item} />
+            </div>
           ))}
         </div>
       )}

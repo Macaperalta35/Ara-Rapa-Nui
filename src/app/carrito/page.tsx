@@ -17,7 +17,7 @@ export default function CartPage() {
         <p className="mt-3 text-volcanic/60">{t.cart.empty}</p>
         <Link
           href="/catalogo/paquetes"
-          className="mt-6 inline-block rounded-full bg-terracotta px-6 py-3 text-sm font-semibold text-white hover:bg-terracotta-light"
+          className="mt-6 inline-block rounded-full bg-terracotta px-6 py-3 text-sm font-semibold text-white transition-transform hover:scale-[1.03] hover:bg-terracotta-light active:scale-[0.98]"
         >
           {t.cart.goToCatalog}
         </Link>
@@ -95,7 +95,7 @@ export default function CartPage() {
 
       <Link
         href="/checkout"
-        className="mt-6 block w-full rounded-full bg-terracotta px-6 py-4 text-center text-sm font-semibold text-white hover:bg-terracotta-light"
+        className="mt-6 block w-full rounded-full bg-terracotta px-6 py-4 text-center text-sm font-semibold text-white transition-transform hover:scale-[1.03] hover:bg-terracotta-light active:scale-[0.98]"
       >
         {t.cart.checkout}
       </Link>

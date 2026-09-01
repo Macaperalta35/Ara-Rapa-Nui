@@ -4,13 +4,18 @@ import { createClient } from "@/lib/supabase/server";
 export default async function AdminDashboardPage() {
   const supabase = await createClient();
 
-  const [{ count: pendingOrders }, { count: newRequests }] = await Promise.all([
-    supabase.from("orders").select("id", { count: "exact", head: true }).eq("status", "pending"),
-    supabase
-      .from("special_requests")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "new"),
-  ]);
+  const [{ count: pendingOrders }, { count: newRequests }, { count: pendingBusinesses }] =
+    await Promise.all([
+      supabase.from("orders").select("id", { count: "exact", head: true }).eq("status", "pending"),
+      supabase
+        .from("special_requests")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "new"),
+      supabase
+        .from("businesses")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "pending"),
+    ]);
 
   return (
     <div>
@@ -32,6 +37,15 @@ export default async function AdminDashboardPage() {
           <p className="text-sm text-volcanic/60">Solicitudes nuevas</p>
           <p className="mt-1 font-display text-3xl font-semibold text-terracotta">
             {newRequests ?? 0}
+          </p>
+        </Link>
+        <Link
+          href="/admin/empresas"
+          className="rounded-2xl border border-sand-dark bg-white p-6 hover:shadow-md"
+        >
+          <p className="text-sm text-volcanic/60">Empresas por revisar</p>
+          <p className="mt-1 font-display text-3xl font-semibold text-terracotta">
+            {pendingBusinesses ?? 0}
           </p>
         </Link>
       </div>
