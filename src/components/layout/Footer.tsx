@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useTranslations } from "@/lib/i18n/LanguageProvider";
 import { PolynesianFlower } from "@/components/ui/PolynesianFlower";
+import { AccountLink } from "./AccountLink";
 
 export function Footer() {
   const t = useTranslations();
@@ -44,8 +45,11 @@ export function Footer() {
           </Link>
         </div>
 
-        <div className="text-sm text-sand/70">
+        <div className="flex flex-col gap-2 text-sm text-sand/70">
           <p>Rapa Nui, Chile</p>
+          <div className="mt-2">
+            <AccountLink />
+          </div>
         </div>
       </div>
 

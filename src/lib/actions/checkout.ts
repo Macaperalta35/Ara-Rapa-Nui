@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import { createPaymentPreference } from "@/lib/mercadopago/create-preference";
 import type { CartItem } from "@/lib/types/cart";
 
@@ -138,12 +139,21 @@ export async function submitCheckout(input: CheckoutInput): Promise<CheckoutResu
     0,
   );
 
+  // If the buyer is logged in, link the order to their account so it shows
+  // up in "Mis pedidos" — derived from the session cookie, never trusted
+  // from client input.
+  const sessionClient = await createClient();
+  const {
+    data: { user: loggedInCustomer },
+  } = await sessionClient.auth.getUser();
+
   const { data: order, error: orderError } = await supabase
     .from("orders")
     .insert({
       customer_name: guest.data.name,
       customer_email: guest.data.email,
       customer_phone: guest.data.phone,
+      customer_id: loggedInCustomer?.id ?? null,
       total_clp: totalClp,
     })
     .select()
